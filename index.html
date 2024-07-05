@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolillero de Bingo con Tabla de Bolillas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #333;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        .tachado {
+            text-decoration: line-through;
+            color: #999;
+            background-color: red; /* Fondo rojo cuando se tacha */
+        }
+        #bolillaActual {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bolillero de Bingo con Tabla de Bolillas</h1>
+    <button onclick="sacarBolilla()">Sacar bolilla</button>
+    <p>
+    <label for="bolillaActual">Bolilla actual:</label>
+    <div id="bolillaActual"></div>
+
+    <table id="tablaBolillas">
+        <thead>
+            <tr>
+                <th></th>
+                <th>B</th>
+                <th>I</th>
+                <th>N</th>
+                <th>G</th>
+                <th>O</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas de la tabla se generarán dinámicamente con JavaScript -->
+        </tbody>
+    </table>
+
+
+    <script>
+        // Letras y números disponibles
+        var letras = ['B', 'I', 'N', 'G', 'O'];
+        var numeros = Array.from({ length: 100 }, (_, index) => index + 1);
+
+        // Registro de bolillas sacadas
+        var bolillasSacadas = [];
+
+        // Generar la tabla de bolillas
+        var tablaBolillas = document.getElementById('tablaBolillas');
+        var tbody = tablaBolillas.querySelector('tbody');
+
+        // Generar filas y celdas para la tabla
+        for (var i = 1; i <= 100; i++) {
+            var fila = document.createElement('tr');
+            var numeroCelda = document.createElement('td');
+            numeroCelda.textContent = i;
+            fila.appendChild(numeroCelda);
+
+            letras.forEach(letra => {
+                var bolilla = letra + i;
+                var bolillaCelda = document.createElement('td');
+                bolillaCelda.textContent = bolilla;
+                fila.appendChild(bolillaCelda);
+            });
+
+            tbody.appendChild(fila);
+        }
+
+        // Función para sacar una bolilla
+        function sacarBolilla() {
+            if (bolillasSacadas.length === 500) { // 5 letras * 100 números = 500 bolillas
+                alert('Se han sacado todas las bolillas del bolillero.');
+                return;
+            }
+
+            var indiceLetra = Math.floor(Math.random() * letras.length);
+            var letra = letras[indiceLetra];
+
+            var indiceNumero = Math.floor(Math.random() * numeros.length);
+            var numero = numeros[indiceNumero];
+
+            var bolillaSacada = letra + numero;
+
+            // Verificar si la bolilla ya ha sido sacada
+            while (bolillasSacadas.includes(bolillaSacada)) {
+                indiceLetra = Math.floor(Math.random() * letras.length);
+                letra = letras[indiceLetra];
+                indiceNumero = Math.floor(Math.random() * numeros.length);
+                numero = numeros[indiceNumero];
+                bolillaSacada = letra + numero;
+            }
+
+            bolillasSacadas.push(bolillaSacada);
+
+            // Mostrar la bolilla actual generada
+            mostrarBolillaActual(bolillaSacada);
+
+            // Actualizar visualmente la tabla
+            marcarBolillaTachada(bolillaSacada);
+        }
+
+        // Función para mostrar la bolilla actual en el label
+        function mostrarBolillaActual(bolilla) {
+            var bolillaActual = document.getElementById('bolillaActual');
+            bolillaActual.textContent = bolilla;
+        }
+
+        // Función para marcar una bolilla como tachada en la tabla
+        function marcarBolillaTachada(bolilla) {
+            var celdas = document.querySelectorAll('td');
+            celdas.forEach(celda => {
+                if (celda.textContent === bolilla) {
+                    celda.classList.add('tachado');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
